@@ -4,7 +4,7 @@
 #include "../SqlAceCli/SqlAceCli.h"
 #include "../GuiHub/GuiHub.h"
 #include "../AMHSDrive/AMHSDrive.h"
-#include "../PathFinder/PathFinder.h"
+#include "../mcscore/mcscore.h"
 
 [event_receiver(native)]
 class MesMsgReceiver 
@@ -88,8 +88,10 @@ private:
 	CGuiHub m_GuiHub;
 	MesMsgSource m_MesSource;
 	CAMHSDrive m_amhsDrive;
-	CPathFinder m_pathFinder;
+	CMCSCore m_core;
 public:
 	void PrintfInfo(void);
+	int Run(void);
+	int Stop(void);
 };
 

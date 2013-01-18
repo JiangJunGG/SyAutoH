@@ -25,18 +25,14 @@ MaterialController::~MaterialController(void)
 
 int MaterialController::Init(void)
 {
-	
-	m_MesReciver.m_pFoupDB = &m_FoupDB;
-		
+	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
+	m_MesReciver.m_pFoupDB = &m_FoupDB;
 	m_MesLink.Init(&m_MesSource);
 	m_MesReciver.hookEvent(&m_MesSource);
-	
 	m_GuiHub.StartServer(&m_amhsDrive);
 	m_amhsDrive.Init();
-	
-	m_pathFinder.Init();
-	m_pathFinder.Test();
+	m_core.Init();
 
 	return 0;
 }
@@ -44,7 +40,6 @@ int MaterialController::Init(void)
 
 void MaterialController::Check(void)
 {
-	m_pathFinder.Test();
 	return;
 	////m_amhsDrive.Run();
 	////m_amhsDrive.SetOHTBackMessage(24, 200);
@@ -94,4 +89,21 @@ void MaterialController::PrintfInfo(void)
 		"Material Control System V1.0.0.1 \r\n";
 	//Log.outBasic(chLogo);
 	Log.outBasic(strLogo.c_str());
+}
+
+
+int MaterialController::Run(void)
+{
+	m_core.Run();
+	return 0;
+}
+
+
+int MaterialController::Stop(void)
+{
+	m_core.Stop();
+
+	CoUninitialize();
+
+	return 0;
 }

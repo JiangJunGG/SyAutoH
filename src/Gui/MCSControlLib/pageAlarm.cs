@@ -7,17 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Gemma;
+using MCSControlLib.Common;
 
-namespace MCSControlLib
+namespace MCSControlLib.Page
 {
     public partial class pageAlarm : baseControlPage, IMcsControlBase
     {
         private LogWinClientCS.LogWinClient logClient = new LogWinClientCS.LogWinClient();
         System.Windows.Forms.Timer timer3;
-        private int m_nPageStartID = 0;
-        private int m_nPageNowID = 0;
-        private int m_nPageStart = 0;
-        private int m_nOfflinePageLimit = 0;
+        //private int m_nPageStartID = 0;
+        //private int m_nPageNowID = 0;
+        //private int m_nPageStart = 0;
+        //private int m_nOfflinePageLimit = 0;
 
         public pageAlarm()
         {
@@ -119,7 +120,7 @@ namespace MCSControlLib
 
         private void bnFirstPage_Click(object sender, EventArgs e)
         {
-            m_nPageStartID = 0;
+            //m_nPageStartID = 0;
            // RefreshAlarmView();
         }
 

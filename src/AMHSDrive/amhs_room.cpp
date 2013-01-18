@@ -32,7 +32,7 @@ amhs_room::amhs_room()
 	m_optHanders.insert(std::make_pair(STK_ACK_STATUS, 
 		&amhs_room::Handle_STK_AckStatus));
 	m_optHanders.insert(std::make_pair(STK_ACK_ROOM, 
-		&amhs_room::Handle_STK_AckRoom));
+		&amhs_room::Handle_STK_AckShelf));
 	m_optHanders.insert(std::make_pair(STK_ACK_STORAGE, 
 		&amhs_room::Handle_STK_AckStorage));
 	m_optHanders.insert(std::make_pair(STK_ACK_INPUT_STATUS, 
@@ -155,19 +155,38 @@ amhs_foup_vec amhs_room::STK_GetFoups(int nID)
 	return foup_vec;
 }
 
+void amhs_room::STK_CleanLastEventFoup(int nID)
+{
+	WLock(rwLock_stocker_map_)
+	{
+		auto itStocker=stocker_map_.find(nID);
+		if (itStocker != stocker_map_.cend())
+		{
+			itStocker->second->last_opt_foup_vec.clear();
+		}
+	}
+}
+
 amhs_foup_vec amhs_room::STK_GetLastEventFoup(int nID)
 {
 	amhs_foup_vec foup_vec;
-	amhs_stocker_map::iterator itStocker=stocker_map_.find(nID);
-	for(amhs_foup_vec::iterator itFoup = itStocker->second->last_opt_foup_vec.begin();
-		itFoup != itStocker->second->last_opt_foup_vec.end(); ++itFoup)
+	RLock(rwLock_stocker_map_)
 	{
-		foup_vec.push_back(*itFoup);
+		auto itStocker=stocker_map_.find(nID);
+		if (itStocker != stocker_map_.cend())
+		{
+			for(auto itFoup = itStocker->second->last_opt_foup_vec.cbegin();
+				itFoup != itStocker->second->last_opt_foup_vec.cend(); ++itFoup)
+			{
+				foup_vec.push_back(*itFoup);
+			}
+		}
 	}
+	
 	return foup_vec;
 }
 
-vector<int> amhs_room::STK_GetRoom(int nID)
+vector<int> amhs_room::STK_GetShelf(int nID)
 {
 	vector<int> room_vec;
 	RLock(rwLock_stocker_map_)
@@ -355,7 +374,7 @@ void amhs_room::Handle_STK_AckStatus(amhs_participant_ptr, AMHSPacket& Packet)
 	}
 	Log.Warning("amhs_room", "Packet handle not implemented\n");
 }
-void amhs_room::Handle_STK_AckRoom(amhs_participant_ptr, AMHSPacket& Packet)
+void amhs_room::Handle_STK_AckShelf(amhs_participant_ptr, AMHSPacket& Packet)
 {
 	uint8 nID = 0;
 	uint8 nStats = 0;

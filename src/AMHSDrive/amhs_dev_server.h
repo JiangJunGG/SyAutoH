@@ -128,7 +128,8 @@ public:
 	amhs_stocker_vec STK_GetStockerList();
 	amhs_foup_vec STK_GetFoups(int nID);
 	amhs_foup_vec STK_GetLastEventFoup(int nID);
-	vector<int> STK_GetRoom(int nID);
+	void STK_CleanLastEventFoup(int nID);
+	vector<int> STK_GetShelf(int nID);
 
 private:
 	void Handle_OHT_AckStatusBackTime(amhs_participant_ptr, AMHSPacket&);
@@ -144,7 +145,7 @@ private:
 
 	void Handle_STK_AckFoup(amhs_participant_ptr, AMHSPacket&);
 	void Handle_STK_AckStatus(amhs_participant_ptr, AMHSPacket&);
-	void Handle_STK_AckRoom(amhs_participant_ptr, AMHSPacket&);
+	void Handle_STK_AckShelf(amhs_participant_ptr, AMHSPacket&);
 	void Handle_STK_AckStorage(amhs_participant_ptr, AMHSPacket&);
 	void Handle_STK_AckInputStatus(amhs_participant_ptr, AMHSPacket&);
 	void Handle_STK_AckHistory(amhs_participant_ptr, AMHSPacket&);
@@ -217,6 +218,7 @@ public:
 	amhs_stocker_vec STK_GetDataSet();
 	amhs_foup_vec STK_GetFoupDataSet(int nID);
 	amhs_foup_vec STK_GetLastOptFoup(int nID);
+	void STK_CleanLastEvent(int nID);
 	vector<int> STK_GetRoom(int nID);
 
 	void STK_FOUP(int nID, int nMode, int nPick, int nFoupData);

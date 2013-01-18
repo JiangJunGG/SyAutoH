@@ -9,8 +9,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Timers;
 using MCS.GuiHub;
+using MCSControlLib.Common;
+using MCSControlLib.Page.Stocker;
 
-namespace MCSControlLib
+namespace MCSControlLib.Page
 {
     public partial class pageStockerOpt : baseControlPage, IMcsControlBase
     {
@@ -40,7 +42,7 @@ namespace MCSControlLib
                 PushData.upStkLastOptFoup, 
                 PushData.upStkStatus, 
                 PushData.upStkInputStatus, 
-   //             PushData.upStkRoomStatus,
+                PushData.upStkRoomStatus,
             };
             m_dataHub.Async_SetPushCmdList(cmds);
         }
@@ -191,12 +193,14 @@ namespace MCSControlLib
                         string lastEventTime = dt.ToString();
                         tBLastEventTime.Text = lastEventTime;
                     }
-                    catch (System.Exception ex)
+                    catch (System.Exception /*ex*/)
                     {
                         //MessageBox.Show(ex.Message);
                     }
                     
                 }
+                RefreshFoup();
+                RefreshShelf();
             }
         }
 
@@ -275,10 +279,12 @@ namespace MCSControlLib
                 byte nID = TryConver.ToByte(item[0].ToString());
                 if (nID == stockorId)
                 {
-                    listViewPageStkRoom.Clear();
+                    listViewPageStkRoom.BeginUpdate();
+                    listViewPageStkRoom.Items.Clear();
                     for (int i = 1; i < 142; i++)
                     {
                         Int32 nStatus = TryConver.ToInt32(item[i].ToString());
+                        //listViewPageStkRoom.DataBindings
                         ListViewItem listItem = new ListViewItem();
                         switch (nStatus)
                         {
@@ -295,6 +301,7 @@ namespace MCSControlLib
                         listItem.Text = i.ToString();
                         listViewPageStkRoom.Items.Add(listItem);
                     }
+                    listViewPageStkRoom.EndUpdate();
                 }
             }
         }
@@ -319,15 +326,19 @@ namespace MCSControlLib
             hisFoup.ShowDialog();
         }
 
-        private void linkLabelStkFoupRefresh_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void RefreshFoup()
         {
             byte nID = stockorId;
             string strVal;
             strVal = string.Format("<{0}>", nID);
 
-            int nWRet = m_dataHub.WriteData(GuiCommand.StkInquiryStorage, strVal);
-
             m_tableFoupsInfo.Rows.Clear();
+            int nWRet = m_dataHub.WriteData(GuiCommand.StkInquiryStorage, strVal);
+        }
+
+        private void linkLabelStkFoupRefresh_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            RefreshFoup();
         }
 
         private void btnBackTimeStatus_Click(object sender, EventArgs e)
@@ -405,23 +416,17 @@ namespace MCSControlLib
             }
         }
 
-        private void linkLabelRoomStatus_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void RefreshShelf()
         {
             byte nID = stockorId;
             string strVal = string.Format("<{0}>", nID);
 
             int nWRet = m_dataHub.WriteData(GuiCommand.StkInquiryRoom, strVal);
-
-            System.Timers.Timer timeRoom = new System.Timers.Timer();
-            timeRoom.Elapsed += new ElapsedEventHandler(TimerGetRoom);
-            timeRoom.Interval = 3000;
-            timeRoom.AutoReset = false;
-            timeRoom.Enabled = true;
         }
 
-        private void TimerGetRoom(object source, System.Timers.ElapsedEventArgs e)
+        private void linkLabelRoomStatus_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            int nWRet = m_dataHub.WriteData(GuiCommand.StkGetRoomStatus, "");
+            RefreshShelf();
         }
     }
 }
